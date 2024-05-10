@@ -13,127 +13,127 @@ namespace fans
         public bool IsAcceptState;
     }
 
-    public class FA1
+    public class FA
     {
-        public bool? Run(IEnumerable<char> s)
+        public State InitialState;
+
+        public bool? Run(IEnumerable<char> str)
         {
-            if (s is null || s.Count() == 0)
-            {
-                return false;
-            }
+            var currentState = InitialState;
 
-            var zeroCount = 0;
-            var oneCount = 0;
-
-            foreach (char c in s)
+            foreach (var symbol in str)
             {
-                if (c == '0')
+                currentState = currentState.Transitions[symbol];
+
+                if (currentState is null)
                 {
-                    zeroCount++;
-
-                    continue;
+                    return false;
                 }
-
-                if (c == '1')
-                {
-                    oneCount++;
-
-                    continue;
-                }
-
-                return false;
             }
 
-            if (zeroCount > 1 || oneCount < 1)
-            {
-                return false;
-            }
-
-            return true;
+            return currentState.IsAcceptState;
         }
     }
 
-    public class FA2
+    public class FA1: FA
     {
-        public bool? Run(IEnumerable<char> s)
+        public static State q0 = new State()
         {
-            if (s is null || s.Count() == 0)
-            {
-                return false;
-            }
+            Name = "q0",
+            IsAcceptState = false,
+            Transitions = new Dictionary<char, State>()
+        };
+        public State q1 = new State()
+        {
+            Name = "q1",
+            IsAcceptState = true,
+            Transitions = new Dictionary<char, State>()
+        };
 
-            var zeroCount = 0;
-            var oneCount = 0;
+        public FA1()
+        {
+            q0.Transitions['0'] = q1;
+            q0.Transitions['1'] = q0;
+            q1.Transitions['0'] = null;
+            q1.Transitions['1'] = q1;
 
-            foreach (char c in s)
-            {
-                if (c == '0')
-                {
-                    zeroCount++;
-
-                    continue;
-                }
-
-                if (c == '1')
-                {
-                    oneCount++;
-
-                    continue;
-                }
-
-                return false;
-            }
-
-            if (zeroCount % 2 == 0 || oneCount % 2 == 0)
-            {
-                return false;
-            }
-
-            return true;
+            InitialState = q0;
         }
     }
 
-    public class FA3
+    public class FA2: FA
     {
-        public bool? Run(IEnumerable<char> s)
+        public static State q0 = new State()
         {
-            if (s is null || s.Count() == 0)
-            {
-                return false;
-            }
+            Name = "q0",
+            IsAcceptState = false,
+            Transitions = new Dictionary<char, State>()
+        };
+        public State q1 = new State()
+        {
+            Name = "q1",
+            IsAcceptState = false,
+            Transitions = new Dictionary<char, State>()
+        };
+        public State q2 = new State()
+        {
+            Name = "q2",
+            IsAcceptState = false,
+            Transitions = new Dictionary<char, State>()
+        };
+        public State q3 = new State()
+        {
+            Name = "q3",
+            IsAcceptState = true,
+            Transitions = new Dictionary<char, State>()
+        };
 
-            var previousIsOne = false;
-            var twoSequentialOnesCount = 0;
+        public FA2()
+        {
+            q0.Transitions['0'] = q2;
+            q0.Transitions['1'] = q1;
+            q1.Transitions['0'] = q3;
+            q1.Transitions['1'] = q0;
+            q2.Transitions['0'] = q0;
+            q2.Transitions['1'] = q3;
+            q3.Transitions['0'] = q1;
+            q3.Transitions['1'] = q2;
 
-            foreach (char c in s)
-            {
-                if (c == '0')
-                {
-                    previousIsOne = false;
+            InitialState = q0;
+        }
+    }
 
-                    continue;
-                }
+    public class FA3: FA
+    {
+        public static State q0 = new State()
+        {
+            Name = "q0",
+            IsAcceptState = false,
+            Transitions = new Dictionary<char, State>()
+        };
+        public State q1 = new State()
+        {
+            Name = "q1",
+            IsAcceptState = false,
+            Transitions = new Dictionary<char, State>()
+        };
+        public State q2 = new State()
+        {
+            Name = "q2",
+            IsAcceptState = true,
+            Transitions = new Dictionary<char, State>()
+        };
 
-                if (c == '1')
-                {
-                    if (previousIsOne)
-                    {
-                        twoSequentialOnesCount++;
-                    }
+        public FA3()
+        {
+            q0.Transitions['0'] = q0;
+            q0.Transitions['1'] = q1;
+            q1.Transitions['0'] = q0;
+            q1.Transitions['1'] = q2;
+            q2.Transitions['0'] = q2;
+            q2.Transitions['1'] = q2;
 
-                    previousIsOne = true;
-                    continue;
-                }
-
-                return false;
-            }
-
-            if (twoSequentialOnesCount == 0)
-            {
-                return false;
-            }
-
-            return true;
+            InitialState = q0;
         }
     }
 
